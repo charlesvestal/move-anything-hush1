@@ -2,11 +2,10 @@
   "id": "hush1",
   "name": "HUSH ONE",
   "abbrev": "HSH",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Monophonic subtractive synthesizer emulating the Roland SH-101",
   "author": "Move Everything Community",
   "ui": "ui.js",
-  "ui_chain": "ui_chain.js",
   "dsp": "dsp.so",
   "api_version": 2,
   "capabilities": {

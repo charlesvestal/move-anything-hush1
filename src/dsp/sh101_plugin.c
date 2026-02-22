@@ -1329,6 +1329,71 @@ static int v2_get_param(void *instance, const char *key, char *buf, int buf_len)
     if (strcmp(key, "fine_tune") == 0) RETF(inst->fine_tune_cents);
     if (strcmp(key, "volume") == 0) RETF(inst->output_level);
     if (strcmp(key, "bend_range") == 0) RETF(inst->pitch_bend_semitones);
+    if (strcmp(key, "ui_hierarchy") == 0) {
+        const char *hierarchy = "{"
+            "\"modes\":null,"
+            "\"levels\":{"
+                "\"root\":{"
+                    "\"list_param\":\"preset\","
+                    "\"count_param\":\"preset_count\","
+                    "\"name_param\":\"preset_name\","
+                    "\"children\":null,"
+                    "\"knobs\":[\"cutoff\",\"resonance\",\"env_amt\",\"attack\",\"decay\",\"sustain\",\"release\",\"volume\"],"
+                    "\"params\":["
+                        "{\"level\":\"oscillator\",\"label\":\"Oscillator\"},"
+                        "{\"level\":\"filter\",\"label\":\"Filter\"},"
+                        "{\"level\":\"amp_env\",\"label\":\"Amp Envelope\"},"
+                        "{\"level\":\"filt_env\",\"label\":\"Filter Envelope\"},"
+                        "{\"level\":\"modulation\",\"label\":\"Modulation\"},"
+                        "{\"level\":\"performance\",\"label\":\"Performance\"},"
+                        "{\"level\":\"advanced\",\"label\":\"Advanced\"}"
+                    "]"
+                "},"
+                "\"oscillator\":{"
+                    "\"children\":null,"
+                    "\"knobs\":[\"saw\",\"pulse\",\"sub\",\"noise\"],"
+                    "\"params\":[\"saw\",\"pulse\",\"sub\",\"noise\",\"sub_mode\",\"white_noise\",\"pulse_width\",\"pwm_mode\",\"pwm_depth\",\"pwm_env_depth\"]"
+                "},"
+                "\"filter\":{"
+                    "\"children\":null,"
+                    "\"knobs\":[\"cutoff\",\"resonance\",\"env_amt\",\"key_follow\"],"
+                    "\"params\":[\"cutoff\",\"resonance\",\"env_amt\",\"key_follow\",\"filter_velocity_sens\"]"
+                "},"
+                "\"amp_env\":{"
+                    "\"children\":null,"
+                    "\"knobs\":[\"attack\",\"decay\",\"sustain\",\"release\"],"
+                    "\"params\":[\"attack\",\"decay\",\"sustain\",\"release\",\"velocity_sens\"]"
+                "},"
+                "\"filt_env\":{"
+                    "\"children\":null,"
+                    "\"knobs\":[\"f_attack\",\"f_decay\",\"f_sustain\",\"f_release\"],"
+                    "\"params\":[\"f_attack\",\"f_decay\",\"f_sustain\",\"f_release\"]"
+                "},"
+                "\"modulation\":{"
+                    "\"children\":null,"
+                    "\"knobs\":[\"lfo_rate\",\"lfo_pitch\",\"lfo_filter\",\"lfo_pwm\"],"
+                    "\"params\":[\"lfo_rate\",\"lfo_waveform\",\"lfo_trigger\",\"lfo_sync\",\"lfo_invert\",\"lfo_pitch_snap\",\"lfo_pitch\",\"lfo_filter\",\"lfo_pwm\"]"
+                "},"
+                "\"performance\":{"
+                    "\"children\":null,"
+                    "\"knobs\":[\"glide\",\"portamento_mode\",\"transpose\",\"octave_transpose\"],"
+                    "\"params\":[\"glide\",\"portamento_mode\",\"portamento_linear\",\"retrigger\",\"hold\",\"transpose\",\"octave_transpose\",\"fine_tune\"]"
+                "},"
+                "\"advanced\":{"
+                    "\"children\":null,"
+                    "\"knobs\":[\"gate_trig_mode\",\"priority\",\"velocity_mode\",\"same_note_quirk\"],"
+                    "\"params\":[\"gate_trig_mode\",\"vca_mode\",\"adsr_declick\",\"priority\",\"velocity_mode\",\"same_note_quirk\",\"filter_env_full_range\",\"filter_env_polarity\",\"filter_volume_correction\"]"
+                "}"
+            "}"
+        "}";
+        int len = strlen(hierarchy);
+        if (len < buf_len) {
+            strcpy(buf, hierarchy);
+            return len;
+        }
+        return -1;
+    }
+
     if (strcmp(key, "import_name") == 0) return snprintf(buf, (size_t)buf_len, "%s", inst->import_name);
     if (strcmp(key, "preset") == 0) RETI(inst->current_preset);
     if (strcmp(key, "preset_count") == 0) RETI(SH101_PRESET_COUNT + inst->external_preset_count);
