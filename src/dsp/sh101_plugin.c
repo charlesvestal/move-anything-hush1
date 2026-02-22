@@ -768,8 +768,13 @@ static int import_vstpreset_path(sh101_instance_t *inst, const char *path) {
 
 static void trigger_envelopes(sh101_instance_t *inst, int hard_reset) {
     if (hard_reset) {
-        inst->amp_env.value = 0.0f;
-        inst->filt_env.value = 0.0f;
+        /* adsr_declick controls how aggressively we reset the envelope on
+           retrigger.  0 = instant zero (original behaviour, clicks at low
+           levels), 1 = keep full current value (soft retrigger, click-free).
+           Intermediate values blend between the two. */
+        float keep = clampf(inst->adsr_declick, 0.0f, 1.0f);
+        inst->amp_env.value  *= keep;
+        inst->filt_env.value *= keep;
         inst->self_osc_phase = 0.0f;
     }
     sh101_env_gate_on(&inst->amp_env, 1.0f);
@@ -848,7 +853,7 @@ static void apply_preset(sh101_instance_t *inst, int preset_index) {
     inst->filter_env_full_range = 0;
     inst->filter_env_polarity = 0;
     inst->same_note_quirk = 0;
-    inst->adsr_declick = 0.0f;
+    inst->adsr_declick = 0.65f;
     inst->self_osc_phase = 0.0f;
     inst->dc_block = 0.0f;
     inst->active_velocity = 1.0f;
@@ -944,7 +949,7 @@ static void init_defaults(sh101_instance_t *inst, float sr) {
     inst->filter_env_full_range = 0;
     inst->filter_env_polarity = 0;
     inst->same_note_quirk = 0;
-    inst->adsr_declick = 0.0f;
+    inst->adsr_declick = 0.65f;
     inst->self_osc_phase = 0.0f;
     inst->dc_block = 0.0f;
     inst->trigger_count = 0;
@@ -1013,6 +1018,7 @@ static void handle_note_on(sh101_instance_t *inst, int note, int velocity) {
 static void handle_note_off(sh101_instance_t *inst, int note) {
     if (note < 0 || note > 127) return;
 
+    int was_held = inst->control.held[note];
     inst->held_velocity[note] = 0.0f;
     sh101_control_note_off(&inst->control, note);
 
@@ -1022,6 +1028,18 @@ static void handle_note_off(sh101_instance_t *inst, int note) {
     }
 
     if (!inst->control.gate) {
+        sh101_env_gate_off(&inst->amp_env);
+        sh101_env_gate_off(&inst->filt_env);
+    } else if (!was_held) {
+        /* Received note-off for a note that was not held, yet the gate is
+           still on.  This typically happens when the octave or transpose
+           changes mid-note, causing the note-off MIDI number to differ from
+           the note-on.  Release everything to prevent stuck notes. */
+        sh101_control_all_notes_off(&inst->control);
+        memset(inst->held_velocity, 0, sizeof(inst->held_velocity));
+        inst->last_triggered_note = -1;
+        inst->active_velocity = 1.0f;
+        apply_velocity_response(inst);
         sh101_env_gate_off(&inst->amp_env);
         sh101_env_gate_off(&inst->filt_env);
     }

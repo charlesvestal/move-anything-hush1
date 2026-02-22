@@ -2,7 +2,7 @@
   "id": "hush1",
   "name": "HUSH ONE",
   "abbrev": "HSH",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Monophonic subtractive synthesizer emulating the Roland SH-101",
   "author": "Move Everything Community",
   "ui": "ui.js",
@@ -115,7 +115,7 @@
           "params": [
             {"key": "gate_trig_mode", "label": "Gate Mode", "type": "enum", "options": ["Gate", "Gate+Trig", "LFO"], "default": 0},
             {"key": "vca_mode", "label": "VCA Mode", "type": "enum", "options": ["Gate", "Envelope"], "default": 1},
-            {"key": "adsr_declick", "label": "ADSR DeClick", "type": "float", "min": 0, "max": 1, "default": 0, "step": 0.01},
+            {"key": "adsr_declick", "label": "ADSR DeClick", "type": "float", "min": 0, "max": 1, "default": 0.65, "step": 0.01},
             {"key": "priority", "label": "Priority", "type": "enum", "options": ["Last", "Low"], "default": 0},
             {"key": "velocity_mode", "label": "Vel Mode", "type": "enum", "options": ["Off", "Trigger", "Active"], "default": 0},
             {"key": "same_note_quirk", "label": "Same-Note", "type": "enum", "options": ["Off", "On"], "default": 0},
