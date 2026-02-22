@@ -1110,6 +1110,18 @@ static const char *state_param_keys[] = {
     NULL
 };
 
+/* Parse a value that may be a numeric index ("0", "1") or an option label
+   ("Off", "On", "Auto") from the chain UI.  Returns the index. */
+static int parse_enum(const char *val, const char *const *opts, int count) {
+    char *endptr;
+    float f = strtof(val, &endptr);
+    if (endptr != val) return clamp_int((int)f, 0, count - 1);
+    for (int i = 0; i < count; i++) {
+        if (strcmp(val, opts[i]) == 0) return i;
+    }
+    return 0;
+}
+
 static void v2_set_param(void *instance, const char *key, const char *val) {
     sh101_instance_t *inst = (sh101_instance_t*)instance;
     if (!inst || !key || !val) return;
@@ -1138,36 +1150,37 @@ static void v2_set_param(void *instance, const char *key, const char *val) {
     if (strcmp(key, "saw") == 0) inst->saw_level = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "pulse") == 0) inst->pulse_level = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "sub") == 0) inst->sub_level = clampf(f, 0.0f, 1.0f);
-    else if (strcmp(key, "sub_mode") == 0) inst->sub_mode = clamp_int((int)f, 0, 2);
+    else if (strcmp(key, "sub_mode") == 0) { static const char *const o[] = {"-2 Oct 50% PW","-2 Oct","-1 Oct"}; inst->sub_mode = parse_enum(val, o, 3); }
     else if (strcmp(key, "noise") == 0) inst->noise_level = clampf(f, 0.0f, 1.0f);
-    else if (strcmp(key, "white_noise") == 0) inst->white_noise = (f >= 0.5f) ? 1 : 0;
+    else if (strcmp(key, "white_noise") == 0) { static const char *const o[] = {"Off","On"}; inst->white_noise = parse_enum(val, o, 2); }
     else if (strcmp(key, "pulse_width") == 0) inst->pulse_width = clampf(f, 0.05f, 0.95f);
-    else if (strcmp(key, "pwm_mode") == 0) inst->pwm_mode = clamp_int((int)f, 0, 2);
+    else if (strcmp(key, "pwm_mode") == 0) { static const char *const o[] = {"Env","Manual","LFO"}; inst->pwm_mode = parse_enum(val, o, 3); }
     else if (strcmp(key, "pwm_depth") == 0) inst->pwm_depth = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "pwm_env_depth") == 0) inst->pwm_env_depth = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "cutoff") == 0) inst->cutoff = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "resonance") == 0) inst->resonance = clampf(f, 0.0f, 1.2f);
     else if (strcmp(key, "env_amt") == 0) inst->env_amount = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "filter_volume_correction") == 0) inst->filter_volume_correction = clampf(f, 0.0f, 1.0f);
-    else if (strcmp(key, "filter_env_full_range") == 0) inst->filter_env_full_range = (f >= 0.5f) ? 1 : 0;
-    else if (strcmp(key, "filter_env_polarity") == 0) inst->filter_env_polarity = (f >= 0.5f) ? 1 : 0;
+    else if (strcmp(key, "filter_env_full_range") == 0) { static const char *const o[] = {"Off","On"}; inst->filter_env_full_range = parse_enum(val, o, 2); }
+    else if (strcmp(key, "filter_env_polarity") == 0) { static const char *const o[] = {"Positive","Negative"}; inst->filter_env_polarity = parse_enum(val, o, 2); }
     else if (strcmp(key, "key_follow") == 0) inst->key_follow = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "lfo_rate") == 0) { sh101_lfo_set_rate_hz(&inst->lfo, clampf(f, 0.02f, 40.0f)); sync_lfo_rate_mode(inst); }
-    else if (strcmp(key, "lfo_waveform") == 0) inst->lfo_waveform = clamp_int((int)f, SH101_LFO_WAVE_TRI, SH101_LFO_WAVE_NOISE);
-    else if (strcmp(key, "lfo_trigger") == 0) inst->lfo_trigger = (f >= 0.5f) ? 1 : 0;
-    else if (strcmp(key, "lfo_sync") == 0) { inst->lfo_sync = (f >= 0.5f) ? 1 : 0; sync_lfo_rate_mode(inst); }
-    else if (strcmp(key, "lfo_invert") == 0) inst->lfo_invert = (f >= 0.5f) ? 1 : 0;
-    else if (strcmp(key, "lfo_pitch_snap") == 0) inst->lfo_pitch_snap = (f >= 0.5f) ? 1 : 0;
+    else if (strcmp(key, "lfo_waveform") == 0) { static const char *const o[] = {"Tri","Rect","Random","Noise"}; inst->lfo_waveform = parse_enum(val, o, 4); }
+    else if (strcmp(key, "lfo_trigger") == 0) { static const char *const o[] = {"Free","Retrig"}; inst->lfo_trigger = parse_enum(val, o, 2); }
+    else if (strcmp(key, "lfo_sync") == 0) { static const char *const o[] = {"Free","Sync"}; inst->lfo_sync = parse_enum(val, o, 2); sync_lfo_rate_mode(inst); }
+    else if (strcmp(key, "lfo_invert") == 0) { static const char *const o[] = {"Off","On"}; inst->lfo_invert = parse_enum(val, o, 2); }
+    else if (strcmp(key, "lfo_pitch_snap") == 0) { static const char *const o[] = {"Off","On"}; inst->lfo_pitch_snap = parse_enum(val, o, 2); }
     else if (strcmp(key, "lfo_pitch") == 0) inst->lfo_pitch = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "lfo_filter") == 0) inst->lfo_filter = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "lfo_pwm") == 0) inst->lfo_pwm = clampf(f, 0.0f, 1.0f);
     else if (strcmp(key, "velocity_sens") == 0) { inst->velocity_sens = clampf(f, 0.0f, 1.0f); apply_velocity_response(inst); }
     else if (strcmp(key, "filter_velocity_sens") == 0) { inst->filter_velocity_sens = clampf(f, 0.0f, 1.0f); apply_velocity_response(inst); }
-    else if (strcmp(key, "retrigger") == 0) inst->retrigger_on_legato = (f >= 0.5f) ? 1 : 0;
-    else if (strcmp(key, "gate_trig_mode") == 0) { inst->gate_trig_mode = clamp_int((int)f, SH101_GATE_MODE_GATE, SH101_GATE_MODE_LFO); sync_priority_from_mode(inst); }
-    else if (strcmp(key, "vca_mode") == 0) inst->vca_mode = clamp_int((int)f, SH101_VCA_MODE_GATE, SH101_VCA_MODE_ENV);
+    else if (strcmp(key, "retrigger") == 0) { static const char *const o[] = {"Legato","Trig"}; inst->retrigger_on_legato = parse_enum(val, o, 2); }
+    else if (strcmp(key, "gate_trig_mode") == 0) { static const char *const o[] = {"Gate","Gate+Trig","LFO"}; inst->gate_trig_mode = parse_enum(val, o, 3); sync_priority_from_mode(inst); }
+    else if (strcmp(key, "vca_mode") == 0) { static const char *const o[] = {"Gate","Envelope"}; inst->vca_mode = parse_enum(val, o, 2); }
     else if (strcmp(key, "velocity_mode") == 0) {
-        inst->velocity_mode = clamp_int((int)f, SH101_VELOCITY_MODE_OFF, SH101_VELOCITY_MODE_ACTIVE_NOTE);
+        static const char *const o[] = {"Off","Trigger","Active"};
+        inst->velocity_mode = parse_enum(val, o, 3);
         if (inst->velocity_mode == SH101_VELOCITY_MODE_ACTIVE_NOTE) {
             inst->active_velocity = pick_active_note_velocity(inst);
         } else if (inst->velocity_mode == SH101_VELOCITY_MODE_OFF) {
@@ -1175,10 +1188,11 @@ static void v2_set_param(void *instance, const char *key, const char *val) {
         }
         apply_velocity_response(inst);
     }
-    else if (strcmp(key, "portamento_mode") == 0) { inst->portamento_mode = clamp_int((int)f, SH101_PORTA_OFF, SH101_PORTA_AUTO); sync_portamento_mode(inst); }
-    else if (strcmp(key, "portamento_linear") == 0) { inst->portamento_linear = (f >= 0.5f) ? 1 : 0; sync_portamento_mode(inst); }
+    else if (strcmp(key, "portamento_mode") == 0) { static const char *const o[] = {"Off","On","Auto"}; inst->portamento_mode = parse_enum(val, o, 3); sync_portamento_mode(inst); }
+    else if (strcmp(key, "portamento_linear") == 0) { static const char *const o[] = {"Expo","Linear"}; inst->portamento_linear = parse_enum(val, o, 2); sync_portamento_mode(inst); }
     else if (strcmp(key, "same_note_quirk") == 0) {
-        inst->same_note_quirk = (f >= 0.5f) ? 1 : 0;
+        static const char *const o[] = {"Off","On"};
+        inst->same_note_quirk = parse_enum(val, o, 2);
         if (!inst->same_note_quirk) inst->last_triggered_note = -1;
     }
     else if (strcmp(key, "adsr_declick") == 0) inst->adsr_declick = clampf(f, 0.0f, 1.0f);
@@ -1191,8 +1205,8 @@ static void v2_set_param(void *instance, const char *key, const char *val) {
     else if (strcmp(key, "f_sustain") == 0) { sh101_env_set_adsr(&inst->filt_env, inst->filt_env.attack_s, inst->filt_env.decay_s, clampf(f, 0.0f, 1.0f), inst->filt_env.release_s); }
     else if (strcmp(key, "f_release") == 0) { sh101_env_set_adsr(&inst->filt_env, inst->filt_env.attack_s, inst->filt_env.decay_s, inst->filt_env.sustain, clampf(f, 0.001f, 8.0f)); }
     else if (strcmp(key, "glide") == 0) { inst->glide_ms_param = clampf(f, 0.0f, 500.0f); sync_portamento_mode(inst); }
-    else if (strcmp(key, "hold") == 0) sh101_control_set_hold(&inst->control, f >= 0.5f ? 1 : 0);
-    else if (strcmp(key, "priority") == 0) sh101_control_set_priority(&inst->control, (f >= 0.5f) ? SH101_NOTE_PRIORITY_LOWEST : SH101_NOTE_PRIORITY_LAST);
+    else if (strcmp(key, "hold") == 0) { static const char *const o[] = {"Off","On"}; sh101_control_set_hold(&inst->control, parse_enum(val, o, 2)); }
+    else if (strcmp(key, "priority") == 0) { static const char *const o[] = {"Last","Low"}; sh101_control_set_priority(&inst->control, parse_enum(val, o, 2) ? SH101_NOTE_PRIORITY_LOWEST : SH101_NOTE_PRIORITY_LAST); }
     else if (strcmp(key, "transpose") == 0) sh101_control_set_transpose(&inst->control, (int)f);
     else if (strcmp(key, "octave_transpose") == 0) sh101_control_set_transpose(&inst->control, (int)f * 12);
     else if (strcmp(key, "fine_tune") == 0) inst->fine_tune_cents = clampf(f, -100.0f, 100.0f);
