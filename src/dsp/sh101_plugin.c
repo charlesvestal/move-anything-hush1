@@ -1305,30 +1305,31 @@ static int v2_get_param(void *instance, const char *key, char *buf, int buf_len)
 
     #define RETF(v) do { return snprintf(buf, (size_t)buf_len, "%.6f", (double)(v)); } while (0)
     #define RETI(v) do { return snprintf(buf, (size_t)buf_len, "%d", (int)(v)); } while (0)
+    #define RETE(idx, opts, cnt) do { return snprintf(buf, (size_t)buf_len, "%s", (opts)[clamp_int((int)(idx), 0, (cnt)-1)]); } while (0)
 
     if (strcmp(key, "saw") == 0) RETF(inst->saw_level);
     if (strcmp(key, "pulse") == 0) RETF(inst->pulse_level);
     if (strcmp(key, "sub") == 0) RETF(inst->sub_level);
-    if (strcmp(key, "sub_mode") == 0) RETI(inst->sub_mode);
+    if (strcmp(key, "sub_mode") == 0) { static const char *const o[] = {"-2 Oct 50% PW","-2 Oct","-1 Oct"}; RETE(inst->sub_mode, o, 3); }
     if (strcmp(key, "noise") == 0) RETF(inst->noise_level);
-    if (strcmp(key, "white_noise") == 0) RETI(inst->white_noise);
+    if (strcmp(key, "white_noise") == 0) { static const char *const o[] = {"Off","On"}; RETE(inst->white_noise, o, 2); }
     if (strcmp(key, "pulse_width") == 0) RETF(inst->pulse_width);
-    if (strcmp(key, "pwm_mode") == 0) RETI(inst->pwm_mode);
+    if (strcmp(key, "pwm_mode") == 0) { static const char *const o[] = {"Env","Manual","LFO"}; RETE(inst->pwm_mode, o, 3); }
     if (strcmp(key, "pwm_depth") == 0) RETF(inst->pwm_depth);
     if (strcmp(key, "pwm_env_depth") == 0) RETF(inst->pwm_env_depth);
     if (strcmp(key, "cutoff") == 0) RETF(inst->cutoff);
     if (strcmp(key, "resonance") == 0) RETF(inst->resonance);
     if (strcmp(key, "env_amt") == 0) RETF(inst->env_amount);
     if (strcmp(key, "filter_volume_correction") == 0) RETF(inst->filter_volume_correction);
-    if (strcmp(key, "filter_env_full_range") == 0) RETI(inst->filter_env_full_range);
-    if (strcmp(key, "filter_env_polarity") == 0) RETI(inst->filter_env_polarity);
+    if (strcmp(key, "filter_env_full_range") == 0) { static const char *const o[] = {"Off","On"}; RETE(inst->filter_env_full_range, o, 2); }
+    if (strcmp(key, "filter_env_polarity") == 0) { static const char *const o[] = {"Positive","Negative"}; RETE(inst->filter_env_polarity, o, 2); }
     if (strcmp(key, "key_follow") == 0) RETF(inst->key_follow);
     if (strcmp(key, "lfo_rate") == 0) RETF(inst->lfo.rate_hz);
-    if (strcmp(key, "lfo_waveform") == 0) RETI(inst->lfo_waveform);
-    if (strcmp(key, "lfo_trigger") == 0) RETI(inst->lfo_trigger);
-    if (strcmp(key, "lfo_sync") == 0) RETI(inst->lfo_sync);
-    if (strcmp(key, "lfo_invert") == 0) RETI(inst->lfo_invert);
-    if (strcmp(key, "lfo_pitch_snap") == 0) RETI(inst->lfo_pitch_snap);
+    if (strcmp(key, "lfo_waveform") == 0) { static const char *const o[] = {"Tri","Rect","Random","Noise"}; RETE(inst->lfo_waveform, o, 4); }
+    if (strcmp(key, "lfo_trigger") == 0) { static const char *const o[] = {"Free","Retrig"}; RETE(inst->lfo_trigger, o, 2); }
+    if (strcmp(key, "lfo_sync") == 0) { static const char *const o[] = {"Free","Sync"}; RETE(inst->lfo_sync, o, 2); }
+    if (strcmp(key, "lfo_invert") == 0) { static const char *const o[] = {"Off","On"}; RETE(inst->lfo_invert, o, 2); }
+    if (strcmp(key, "lfo_pitch_snap") == 0) { static const char *const o[] = {"Off","On"}; RETE(inst->lfo_pitch_snap, o, 2); }
     if (strcmp(key, "lfo_pitch") == 0) RETF(inst->lfo_pitch);
     if (strcmp(key, "lfo_filter") == 0) RETF(inst->lfo_filter);
     if (strcmp(key, "lfo_pwm") == 0) RETF(inst->lfo_pwm);
@@ -1342,20 +1343,20 @@ static int v2_get_param(void *instance, const char *key, char *buf, int buf_len)
     if (strcmp(key, "f_decay") == 0) RETF(inst->filt_env.decay_s);
     if (strcmp(key, "f_sustain") == 0) RETF(inst->filt_env.sustain);
     if (strcmp(key, "f_release") == 0) RETF(inst->filt_env.release_s);
-    if (strcmp(key, "retrigger") == 0) RETI(inst->retrigger_on_legato);
-    if (strcmp(key, "gate_trig_mode") == 0) RETI(inst->gate_trig_mode);
-    if (strcmp(key, "vca_mode") == 0) RETI(inst->vca_mode);
-    if (strcmp(key, "velocity_mode") == 0) RETI(inst->velocity_mode);
-    if (strcmp(key, "portamento_mode") == 0) RETI(inst->portamento_mode);
-    if (strcmp(key, "portamento_linear") == 0) RETI(inst->portamento_linear);
-    if (strcmp(key, "same_note_quirk") == 0) RETI(inst->same_note_quirk);
+    if (strcmp(key, "retrigger") == 0) { static const char *const o[] = {"Legato","Trig"}; RETE(inst->retrigger_on_legato, o, 2); }
+    if (strcmp(key, "gate_trig_mode") == 0) { static const char *const o[] = {"Gate","Gate+Trig","LFO"}; RETE(inst->gate_trig_mode, o, 3); }
+    if (strcmp(key, "vca_mode") == 0) { static const char *const o[] = {"Gate","Envelope"}; RETE(inst->vca_mode, o, 2); }
+    if (strcmp(key, "velocity_mode") == 0) { static const char *const o[] = {"Off","Trigger","Active"}; RETE(inst->velocity_mode, o, 3); }
+    if (strcmp(key, "portamento_mode") == 0) { static const char *const o[] = {"Off","On","Auto"}; RETE(inst->portamento_mode, o, 3); }
+    if (strcmp(key, "portamento_linear") == 0) { static const char *const o[] = {"Expo","Linear"}; RETE(inst->portamento_linear, o, 2); }
+    if (strcmp(key, "same_note_quirk") == 0) { static const char *const o[] = {"Off","On"}; RETE(inst->same_note_quirk, o, 2); }
     if (strcmp(key, "adsr_declick") == 0) RETF(inst->adsr_declick);
     if (strcmp(key, "trigger_count") == 0) RETI(inst->trigger_count);
     if (strcmp(key, "active_velocity") == 0) RETF(inst->active_velocity);
     if (strcmp(key, "current_note") == 0) RETI(inst->control.current_note);
     if (strcmp(key, "glide") == 0) RETF(inst->glide_ms_param);
-    if (strcmp(key, "hold") == 0) RETI(inst->control.hold_enabled);
-    if (strcmp(key, "priority") == 0) RETI((int)inst->control.priority);
+    if (strcmp(key, "hold") == 0) { static const char *const o[] = {"Off","On"}; RETE(inst->control.hold_enabled, o, 2); }
+    if (strcmp(key, "priority") == 0) { static const char *const o[] = {"Last","Low"}; RETE((int)inst->control.priority, o, 2); }
     if (strcmp(key, "transpose") == 0) RETI(inst->control.transpose);
     if (strcmp(key, "octave_transpose") == 0) RETI(inst->control.transpose / 12);
     if (strcmp(key, "fine_tune") == 0) RETF(inst->fine_tune_cents);
