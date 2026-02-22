@@ -1,0 +1,20 @@
+{
+  "hold_last_note": {
+    "events": [
+      {"type": "note_on", "note": 60},
+      {"type": "note_on", "note": 64},
+      {"type": "note_off", "note": 64},
+      {"type": "hold", "value": 1},
+      {"type": "note_off", "note": 60}
+    ],
+    "expected_final_note": 60
+  },
+  "lowest_priority": {
+    "events": [
+      {"type": "priority", "value": "lowest"},
+      {"type": "note_on", "note": 67},
+      {"type": "note_on", "note": 60}
+    ],
+    "expected_final_note": 60
+  }
+}
