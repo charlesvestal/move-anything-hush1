@@ -335,9 +335,11 @@ static const char* find_bytes(const char *hay, size_t hay_len, const char *needl
 static int tal_extract_xml(const char *blob, size_t blob_len, const char **xml_start, size_t *xml_len) {
     static const char *k_start_a = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <tal ";
     static const char *k_start_b = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><tal ";
+    static const char *k_tal = "<tal ";
     static const char *k_end = "</tal>";
     const char *start = find_bytes(blob, blob_len, k_start_a, strlen(k_start_a));
     if (!start) start = find_bytes(blob, blob_len, k_start_b, strlen(k_start_b));
+    if (!start) start = find_bytes(blob, blob_len, k_tal, strlen(k_tal));
     if (!start) return 0;
 
     size_t rem = blob_len - (size_t)(start - blob);
@@ -468,13 +470,12 @@ static int load_file_blob(const char *path, char **blob_out, size_t *blob_len_ou
 }
 
 static int has_vstpreset_ext(const char *name) {
-    const char *ext = ".vstpreset";
     size_t name_len;
-    size_t ext_len = strlen(ext);
     if (!name) return 0;
     name_len = strlen(name);
-    if (name_len <= ext_len) return 0;
-    return strcmp(name + name_len - ext_len, ext) == 0;
+    if (name_len > 10 && strcmp(name + name_len - 10, ".vstpreset") == 0) return 1;
+    if (name_len > 9 && strcmp(name + name_len - 9, ".bassline") == 0) return 1;
+    return 0;
 }
 
 static void basename_no_ext(const char *path, char *out, size_t out_len) {
@@ -485,6 +486,8 @@ static void basename_no_ext(const char *path, char *out, size_t out_len) {
     n = strlen(base);
     if (n > 10 && strcmp(base + n - 10, ".vstpreset") == 0) {
         n -= 10;
+    } else if (n > 9 && strcmp(base + n - 9, ".bassline") == 0) {
+        n -= 9;
     }
     if (n >= out_len) n = out_len - 1;
     memcpy(out, base, n);
