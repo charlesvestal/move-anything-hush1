@@ -42,6 +42,7 @@ mkdir -p build dist/hush1
   -lm
 
 cat src/module.json > dist/hush1/module.json
+[ -f src/help.json ] && cat src/help.json > dist/hush1/help.json
 cat src/ui.js > dist/hush1/ui.js
 cat build/dsp.so > dist/hush1/dsp.so
 mkdir -p dist/hush1/presets

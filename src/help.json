@@ -1,0 +1,195 @@
+{
+  "title": "HUSH ONE",
+  "children": [
+    {
+      "title": "Overview",
+      "lines": [
+        "Monophonic synth",
+        "emulating the",
+        "Roland SH-101.",
+        "",
+        "Saw, pulse (PWM),",
+        "sub-oscillator, and",
+        "noise. 4-pole LP",
+        "filter with envelope",
+        "and LFO modulation.",
+        "",
+        "Last-note or lowest-",
+        "note priority with",
+        "glide/portamento.",
+        "",
+        "11 built-in presets.",
+        "Imports TAL-BassLine",
+        ".vstpreset files."
+      ]
+    },
+    {
+      "title": "Controls",
+      "children": [
+        {
+          "title": "Knob Mapping",
+          "lines": [
+            "Knob 1: Preset",
+            "Knob 2: Volume",
+            "Knob 3: Bend Range"
+          ]
+        },
+        {
+          "title": "Oscillator",
+          "lines": [
+            "Saw: sawtooth level",
+            "Pulse: pulse level",
+            "Sub: sub-osc level",
+            "Noise: noise level",
+            "",
+            "Sub Mode:",
+            " -2 Oct 50% PW",
+            " -2 Oct",
+            " -1 Oct",
+            "",
+            "Pulse Width:",
+            " 0.05-0.95",
+            " (0.5 = square)",
+            "",
+            "PWM Mode:",
+            " Env: filter env",
+            " Manual: fixed PW",
+            " LFO: LFO modulates",
+            "",
+            "PWM Depth: mod amt"
+          ]
+        },
+        {
+          "title": "Filter",
+          "lines": [
+            "4-pole lowpass.",
+            "",
+            "Cutoff: frequency",
+            "Resonance: 0-1.2",
+            " (>1.0 self-osc)",
+            "Env Amt: filter",
+            " envelope depth",
+            "Key Follow: keyboard",
+            " tracking",
+            "",
+            "Velocity Sens:",
+            " velocity to cutoff",
+            "",
+            "Env Polarity:",
+            " Positive or",
+            " Negative (invert)",
+            "",
+            "Full Range: sweep",
+            " entire 0-20kHz"
+          ]
+        },
+        {
+          "title": "Envelopes",
+          "lines": [
+            "Amp Envelope:",
+            " Attack: 1ms-4s",
+            " Decay: 1ms-6s",
+            " Sustain: 0-100%",
+            " Release: 1ms-8s",
+            "",
+            "Filter Envelope:",
+            " F.Attack: 1ms-4s",
+            " F.Decay: 1ms-6s",
+            " F.Sustain: 0-100%",
+            " F.Release: 1ms-8s",
+            "",
+            "Velocity Sens:",
+            " Off, Trigger, or",
+            " Active (follows",
+            " current held note)"
+          ]
+        },
+        {
+          "title": "LFO",
+          "lines": [
+            "Rate: 0.02-40 Hz",
+            "",
+            "Waveform:",
+            " Tri, Rect, Random,",
+            " Noise (S&H)",
+            "",
+            "Trigger:",
+            " Free or Retrigger",
+            "",
+            "Destinations:",
+            " Pitch: vibrato",
+            " Filter: wah",
+            " PWM: pulse width",
+            "",
+            "Invert: flip",
+            " polarity",
+            "Pitch Snap: lock",
+            " to semitones"
+          ]
+        },
+        {
+          "title": "Performance",
+          "lines": [
+            "Glide: 0-500ms",
+            "",
+            "Portamento Mode:",
+            " Off: no glide",
+            " On: always glide",
+            " Auto: legato only",
+            "",
+            "Portamento Curve:",
+            " Expo (musical) or",
+            " Linear",
+            "",
+            "Retrigger:",
+            " Legato: no retrig",
+            "  on held notes",
+            " Trig: always",
+            "  retrigger envelope",
+            "",
+            "Hold: sustain notes",
+            "Priority: Last/Low"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "MIDI",
+      "lines": [
+        "Monophonic with",
+        "note stack (16).",
+        "",
+        "Pitch Bend:",
+        " 0-12 semitones",
+        " (configurable)",
+        "",
+        "Mod Wheel (CC 1):",
+        " Filter modulation",
+        "",
+        "CC 123: All Notes Off"
+      ]
+    },
+    {
+      "title": "Presets",
+      "lines": [
+        "11 built-in presets:",
+        "",
+        " Init",
+        " Classic 101 Sub",
+        " Acid-ish Square",
+        " Hollow PWM Lead",
+        " Laser Zap",
+        " Resonant Pluck",
+        " Self-Osc Sine Lead",
+        " Noisy Snare Hit",
+        " Portamento Lead",
+        " Arp Pluck Clocked",
+        " Random Filter",
+        "",
+        "Upload .vstpreset",
+        "files (TAL-BassLine)",
+        "to presets/ folder."
+      ]
+    }
+  ]
+}
