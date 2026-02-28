@@ -44,10 +44,6 @@ bash tests/smoke/test_module_artifacts.sh
 python3 -m pytest tests/ -q
 ```
 
-## Credits
-
-Derived from the disassembled 80C49 code provided at  https://github.com/joebritt/SH101_Disassembled
-
 ## AI Assistance Disclaimer
 
 This module is part of Move Everything and was developed with AI assistance, including Claude, Codex, and other AI assistants.
